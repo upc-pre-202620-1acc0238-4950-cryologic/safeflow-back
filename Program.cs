@@ -10,7 +10,17 @@ var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
 {
-    await SafeFlowDbSeeder.InitializeAsync(scope.ServiceProvider, app.Configuration);
+    try
+    {
+        // 1. Ejecutamos el seeder de forma segura
+        await SafeFlowDbSeeder.InitializeAsync(scope.ServiceProvider, app.Configuration);
+    }
+    catch (Exception ex)
+    {
+        // 2. Si falla la BD, capturamos el error para que la API no muera (evita el 503)
+        var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
+        logger.LogCritical(ex, ">>> ERROR CRÍTICO AL CONECTAR O SEMBRAR LA BD EN AZURE <<<");
+    }
 }
 
 // Permite Swagger en cualquier entorno
