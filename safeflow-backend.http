@@ -1,0 +1,8 @@
+@safeflow_backend_HostAddress = http://localhost:5115
+@safeflow_backend_AccessToken = replace-with-sign-in-token
+
+GET {{safeflow_backend_HostAddress}}/api/monitoring/dashboard
+Accept: application/json
+Authorization: Bearer {{safeflow_backend_AccessToken}}
+
+###
