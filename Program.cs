@@ -13,11 +13,13 @@ using (var scope = app.Services.CreateScope())
     await SafeFlowDbSeeder.InitializeAsync(scope.ServiceProvider, app.Configuration);
 }
 
-if (app.Environment.IsDevelopment())
+// Permite Swagger en cualquier entorno
+app.UseSwagger();
+app.UseSwaggerUI(c =>
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "SafeFlow API v1");
+    c.RoutePrefix = "swagger"; // O string.Empty si quieres que sea la página principal
+});
 
 app.UseCors("SafeFlowFrontend");
 app.UseRequestAuthorization();
