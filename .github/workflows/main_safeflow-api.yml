@@ -13,7 +13,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     permissions:
-      contents: read #This is required for actions/checkout
+      contents: read
 
     steps:
       - uses: actions/checkout@v4
@@ -38,22 +38,12 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     needs: build
-    permissions:
-      id-token: write #This is required for requesting the JWT
-      contents: read #This is required for actions/checkout
 
     steps:
       - name: Download artifact from build job
         uses: actions/download-artifact@v4
         with:
           name: .net-app
-      
-      - name: Login to Azure
-        uses: azure/login@v2
-        with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_C93DD61515024161A41621C2AC8F318F }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_530D614DBC8F41788BDC9891B58CDFD2 }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_558A32EEE4CE4236B543D456C2F9B1DA }}
 
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
@@ -61,5 +51,5 @@ jobs:
         with:
           app-name: 'safeflow-api'
           slot-name: 'Production'
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE }}
           package: .
-          
